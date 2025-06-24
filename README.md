@@ -1,5 +1,5 @@
 ### Zoho CRM Widget (React)
-This is a demo react application to test the EmbeddedAppSDK provided by Zoho form Zoho CRM Widget Development.
+This is a demo react application to test the EmbeddedAppSDK provided by Zoho for Zoho CRM Widget Development.
 
 ---
 
