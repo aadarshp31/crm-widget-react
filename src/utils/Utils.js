@@ -1,3 +1,4 @@
+const WEBHOOK_URL = 'https://webhook.site/90525651-37d4-4126-b1ec-8380d4177821/widget/upload'
 
 class UTILS {
     static async testZOHOCRMMethods() {
@@ -33,8 +34,8 @@ class UTILS {
             result.createInstanceExample = await createInstanceExample();
 
             // Image upload test
-            //   const WEBHOOK_URL = "https://webhook.site/#!/view/6ef18f7e-a10c-4875-8960-856337a4801b";
-            // await uploadTest(WEBHOOK_URL);
+            result.uploadTest = await uploadTest(WEBHOOK_URL);
+
             return result;
         } catch (e) {
             console.error("zrc error", e);
@@ -133,7 +134,7 @@ class UTILS {
                 console.info({ imageDownloadResponse });
 
                 // Example image
-                imageBlob = imageDownloadResponse.data;
+                const imageBlob = imageDownloadResponse.data;
 
                 const formData = new FormData();
                 formData.append("id", 101);
