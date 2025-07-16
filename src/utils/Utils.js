@@ -1,4 +1,4 @@
-const WEBHOOK_URL = 'https://webhook.site/90525651-37d4-4126-b1ec-8380d4177821/widget/upload'
+const WEBHOOK_URL = 'https://webhook.site/2df0a6d1-a494-449d-94b6-9176f1a5caae/widget/upload'
 
 class UTILS {
     static async testZOHOCRMMethods() {
@@ -32,6 +32,8 @@ class UTILS {
 
             // Create Instance Example
             result.createInstanceExample = await createInstanceExample();
+
+            result.testMissingZrcCases = await testMissingZrcCases();
 
             // Image upload test
             result.uploadTest = await uploadTest(WEBHOOK_URL);
@@ -79,7 +81,7 @@ class UTILS {
                     method: "get",
                     path: "/posts",
                     connection: "zohocrm",
-                    baseUrl: "https://jsonplaceholder.typicode.com",
+                    baseUrl: "https://jsonplaceholder.typicode.com"
                 });
 
                 const createPostWithJsonData = await zrc.request({
@@ -151,6 +153,64 @@ class UTILS {
                 console.error({ error });
             }
         }
+
+        // test missing cases
+        async function testMissingZrcCases() {
+            const result = {};
+
+            // wrong connection name
+            try {
+                result.wrongConnectionNameResponse = await zrc.get("https://jsonplaceholder.typicode.com/posts/2", { connection: "zohocrmmmmm" });
+            } catch (error) {
+                result.wrongConnectionNameResponse = error;
+            }
+
+            // response type stream not supported
+            try {
+                result.streamRespTypeNotSupported = await zrc.get("https://jsonplaceholder.typicode.com/posts/2", { responseType: "stream" });
+            } catch (error) {
+                result.streamRespTypeNotSupported = error;
+            }
+
+            // 404 error response
+            try {
+                result.result400Response = await zrc.get("https://jsonplaceholder.typicode.com/asdasdasd");
+            } catch (error) {
+                result.result400Response = error;
+            }
+
+            // connection 404 error response
+            try {
+                result.result400ConnectionResponse = await zrc.get("https://jsonplaceholder.typicode.com/asdasdasd", { connection: "zohocrm" });
+            } catch (error) {
+                result.result400ConnectionResponse = error;
+            }
+
+            // all responseTypes responses
+            try {
+                result.arrayBufferConnectionResponse = await zrc.get("https://jsonplaceholder.typicode.com/posts/2", {
+                    connection: "zohocrm",
+                    responseType: "arraybuffer"
+                });
+                result.jsonConnectionResponse = await zrc.get("https://jsonplaceholder.typicode.com/posts/2", {
+                    connection: "zohocrm",
+                    responseType: "json"
+                });
+                result.textConnectionResponse = await zrc.get("https://jsonplaceholder.typicode.com/posts/2", {
+                    connection: "zohocrm",
+                    responseType: "text"
+                });
+                result.arrayBufferResponse = await zrc.get("https://jsonplaceholder.typicode.com/posts/2", { responseType: "arraybuffer" });
+                result.nonJsonResponseWithJsonRespType = await zrc.get("https://jsonplaceholder.typicode.com", { responseType: "json" });
+                result.jsonResponse = await zrc.get("https://jsonplaceholder.typicode.com/posts/2", { responseType: "json" });
+                result.textResponse = await zrc.get("https://jsonplaceholder.typicode.com/posts/2", { responseType: "text" });
+            } catch (error) {
+                result.error = error;
+            }
+
+            console.info("testMissingZrcCases => ", result);
+            return result;
+        }
     }
 
     static async testZDKMethods() {
@@ -161,6 +221,8 @@ class UTILS {
             result.showConfirmation = await ZDK.Client.showConfirmation("Sanity: ZDK showConfirmation?", "Yes", "No");
             await ZDK.Client.showMessage("Sanity: ZDK showMessage works!");
 			result.showMessage = 'Sanity: ZDK showMessage works!';
+            result.getInput = await ZDK.Client.getInput([{ type: 'textarea', label: 'Enter batch name', default_value:'sample' }], 'Employees', 'OK', 'Cancel');
+            result.openPopup = await ZDK.Client.openPopup({ api_name: 'custom_button_sample_widget', type: 'widget', header: 'Sample Widget', animation_type: 4, height: '450px', width: '450px', left: '10px' }, { data: 'sample data to be passed to "PageLoad" event of widget' });
 
             return result;
             // $Client
